@@ -1,0 +1,16 @@
+Uwagi:
+
+1) Nadal nie jest skonfigurowana prawidłowo wtyczka javax-maven-plugin – nie można uruchomić aplikacji za pomocą mvn javax:run.
+
+2) Jest poprawka w repozytorium o nazwie Metoda fabrykująca i singleton, która dotyczy trzech plików źródłowych, ale nie ma do niej żadnej dokumentacji w Wiki, ani nic w kodzie nie wskazuje, że takie wzorce zostały zaimplementowane.
+
+Ocena:
+
+Niestety 2,0 (ndst)
+
+Aktualizacja z dnia 16.12.2025:
+
+Wzorzec singleton jest zaimplementowany poprawnie, ale sugerowałbym zastosować słowo kluczowe synchonize w metodzie getInstance().
+
+Wzorzec metoda fabrykująca (metoda wytwórcza) niestety nie jest poprawnie wykonany. Proszę poprawić.
+
