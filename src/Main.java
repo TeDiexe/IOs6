@@ -9,7 +9,7 @@ import javax.imageio.*;
 import javax.imageio.stream.ImageOutputStream;
 
 public class Main extends JFrame {
-    private BinaryDataManager dataManager;
+    private DatabaseManager dataManager;
     private User currentUser;
     private DefaultListModel<Album> albumListModel;
     private JList<Album> albumList;
@@ -22,7 +22,7 @@ public class Main extends JFrame {
     private DefaultListModel<String> tagsListModel;
 
     public Main() {
-        dataManager = new BinaryDataManager();
+        dataManager = new DatabaseManager(); // Inicjalizacja bazy
         loginScreen();
         setupGUI();
     }
@@ -44,7 +44,7 @@ public class Main extends JFrame {
     }
 
     private void setupGUI() {
-        setTitle("System Albumu v2.5 - Ultra Quality");
+        setTitle("System Albumu");
         setSize(1300, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -66,7 +66,7 @@ public class Main extends JFrame {
             String name = JOptionPane.showInputDialog("Nazwa albumu:");
             if (name != null && !name.trim().isEmpty()) {
                 dataManager.createAlbum(name, currentUser);
-                refreshAlbums();
+                refreshAlbums(); // Odświeża listę po dodaniu z bazy
             }
         });
         leftPanel.add(addAlbumBtn, BorderLayout.SOUTH);
@@ -162,7 +162,9 @@ public class Main extends JFrame {
                 BufferedImage bimg = ImageIO.read(new ByteArrayInputStream(fullData));
                 String res = bimg.getWidth() + "x" + bimg.getHeight();
                 byte[] thumbData = createHighQualityThumb(bimg, 600);
-                Photo photo = new Photo(file.getName(), fullData, thumbData, LocalDate.now().toString(), res, file.length());
+
+                // Id ustawiamy na 0, bo baza danych sama wygeneruje ID podczas zapisu
+                Photo photo = new Photo(0, file.getName(), fullData, thumbData, LocalDate.now().toString(), res, file.length());
                 dataManager.addPhotoToAlbum(photo, selected);
                 updatePhotoList();
             } catch (Exception ex) {
@@ -204,8 +206,8 @@ public class Main extends JFrame {
         if (selected != null) {
             String newTag = JOptionPane.showInputDialog("Tag:");
             if (newTag != null && !newTag.trim().isEmpty()) {
-                selected.addTag(newTag.trim());
-                dataManager.save();
+                // Wywołanie zapisu tagu do bazy DANYCH
+                dataManager.addTagToPhoto(selected, newTag);
                 showPhotoPreview();
                 photoList.repaint();
             }
@@ -216,8 +218,8 @@ public class Main extends JFrame {
         Photo selectedPhoto = photoList.getSelectedValue();
         String selectedTag = tagsDisplayList.getSelectedValue();
         if (selectedPhoto != null && selectedTag != null) {
-            selectedPhoto.getTags().remove(selectedTag);
-            dataManager.save();
+            // Wywołanie usunięcia tagu z bazy DANYCH
+            dataManager.removeTagFromPhoto(selectedPhoto, selectedTag);
             showPhotoPreview();
             photoList.repaint();
         }
